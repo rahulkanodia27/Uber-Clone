@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rider_app/AllScreens/loginScreen.dart';
 import 'package:rider_app/AllScreens/mainscreen.dart';
+import 'package:rider_app/AllWidgets/progressDialog.dart';
 import 'package:rider_app/main.dart';
 
 class RegistrationScreen extends StatelessWidget {
@@ -141,10 +142,16 @@ class RegistrationScreen extends StatelessWidget {
   }
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   void registerNewUser(BuildContext context) async {
+
+     showDialog(context: context,barrierDismissible: false ,builder: (BuildContext context) {
+      return ProgressDialog(massage: "Registring, Please wait...",);
+    },);
+    
     final  firebaseUser = (await _firebaseAuth.createUserWithEmailAndPassword(
         email: emailTextEditingController.text,
         password: passwordTextEditingController.text,
       ).catchError((erMsg){
+        Navigator.pop(context);
         displayToastMassage("Error: "+erMsg.toString(), context);
       })).user;
 
@@ -163,6 +170,7 @@ class RegistrationScreen extends StatelessWidget {
 
         Navigator.pushNamedAndRemoveUntil(context, MainScreen.idScreen, (route) => false);
       }else{
+        Navigator.pop(context);
         // error ocured - display error msg
         displayToastMassage("New user account has not been Created", context);
       }

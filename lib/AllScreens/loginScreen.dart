@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:rider_app/AllScreens/mainscreen.dart';
 import 'package:rider_app/AllScreens/registrationScreen.dart';
+import 'package:rider_app/AllWidgets/progressDialog.dart';
 import 'package:rider_app/main.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -111,10 +112,15 @@ class LoginScreen extends StatelessWidget {
    final FirebaseAuth _firebaseAuth = FirebaseAuth.instance; 
   void loginAndAuthenticateUser(BuildContext context) async {
 
+    showDialog(context: context,barrierDismissible: false ,builder: (BuildContext context) {
+      return ProgressDialog(massage: "Authenticaion, Please wait...",);
+    },);
+    
     final  firebaseUser = (await _firebaseAuth.signInWithEmailAndPassword(
         email: emailTextEditingController.text,
         password: passwordTextEditingController.text,
       ).catchError((erMsg){
+        Navigator.pop(context);
         displayToastMassage("Error: "+erMsg.toString(), context);
       })).user;
 
@@ -137,6 +143,7 @@ class LoginScreen extends StatelessWidget {
             displayToastMassage("You are Logged In now.", context);
 
       }else{
+        Navigator.pop(context);
         // error ocured - display error msg
         displayToastMassage("Error Occured, can not be signed In", context);
       }
