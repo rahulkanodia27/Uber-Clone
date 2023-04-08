@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "976629134292",
+    "project_id": "flutter-uber-clone-67b3d",
+    "storage_bucket": "flutter-uber-clone-67b3d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976629134292:android:04849dc20691dd99775c41",
+        "android_client_info": {
+          "package_name": "com.kanodia.riderapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "976629134292-n68c41qtou8splivur92vpvqhdudcav7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7qeOP-h0NA5dBNZxTtfLr-PUZy36CW4Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "976629134292-n68c41qtou8splivur92vpvqhdudcav7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

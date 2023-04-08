@@ -1,0 +1,174 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:rider_app/AllScreens/loginScreen.dart';
+import 'package:rider_app/AllScreens/mainscreen.dart';
+import 'package:rider_app/main.dart';
+
+class RegistrationScreen extends StatelessWidget {
+  static const idScreen = "register";
+  TextEditingController nameTextEditingController = TextEditingController();
+  TextEditingController emailTextEditingController = TextEditingController();
+  TextEditingController phoneTextEditingController = TextEditingController();
+  TextEditingController passwordTextEditingController = TextEditingController();
+
+
+ RegistrationScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding:  EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                SizedBox(height: 1.0,),
+                Image(image: AssetImage("images/logo.png"),
+                width: 200.0,
+                height: 200.0,
+                alignment: Alignment.center,
+                ),
+                SizedBox(height: 1.0,),
+                Text("Register as a Rider",
+                style: TextStyle(fontSize: 24.0,fontFamily:  "Brand Bold"),
+                textAlign: TextAlign.center,
+                ),
+                Padding(padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                child: Column(
+                  children: [
+                    
+                SizedBox(height: 1.0,),
+        TextField(
+          controller: nameTextEditingController,
+                  decoration: InputDecoration(
+                    labelText: "Name",
+                    labelStyle: TextStyle(
+                      fontSize: 14.0,
+                    ),
+                    hintStyle: TextStyle(color: Colors.grey,fontSize: 14.0),
+                  ),
+                  style: TextStyle(fontSize: 20.0),
+                ),
+                SizedBox(height: 10.0,),
+                TextField(
+                  controller: emailTextEditingController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: "Email",
+                    labelStyle: TextStyle(
+                      fontSize: 14.0,
+                    ),
+                    hintStyle: TextStyle(color: Colors.grey,fontSize: 14.0),
+                  ),
+                  style: TextStyle(fontSize: 20.0),
+                ),
+                SizedBox(height: 10.0,),
+        
+        TextField(
+          controller: phoneTextEditingController,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                    labelText: "Phone",
+                    labelStyle: TextStyle(
+                      fontSize: 14.0,
+                    ),
+                    hintStyle: TextStyle(color: Colors.grey,fontSize: 14.0),
+                  ),
+                  style: TextStyle(fontSize: 20.0),
+                ),
+                SizedBox(height: 10.0,),
+    
+                TextField(
+                  controller: passwordTextEditingController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    labelStyle: TextStyle(
+                      fontSize: 14.0,
+                    ),
+                    hintStyle: TextStyle(color: Colors.grey,fontSize: 14.0),
+                  ),
+                  style: TextStyle(fontSize: 10.0),
+                ),
+                SizedBox(height: 20.0,),
+                ElevatedButton(
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.yellow),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.0),
+            )
+          )
+                  ),
+                  child: Container(
+                  height: 50.0,
+                  child: Center(
+                    child: Text("Sign Up",
+                    style: TextStyle(fontSize: 18.0,fontFamily: "Brand Bold",color: Colors.white),
+                    ),
+                  ),
+                ),
+                onPressed: (){
+                  if(nameTextEditingController.text.length<3){
+                    displayToastMassage("Name must be atleast 3 Chractors" ,context);
+                  }else if(!emailTextEditingController.text.contains("@")){
+                    displayToastMassage('Email Address is not Valid', context);
+                  }else if(phoneTextEditingController.text.isEmpty){
+                    displayToastMassage('Phone Number is mandatory', context);
+                  }else if(passwordTextEditingController.text.length<6){
+                    displayToastMassage('Password must be atleast 6 characters', context);
+                  }else{
+                    registerNewUser(context);
+                  }
+                  
+                },)
+                  ],
+                ),
+                ),
+        
+                TextButton(onPressed: (){
+                  Navigator.pushNamedAndRemoveUntil(context, LoginScreen.idScreen, (route) => false);
+                }, child: Text("Already have an Account? Login Here."))
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  void registerNewUser(BuildContext context) async {
+    final  firebaseUser = (await _firebaseAuth.createUserWithEmailAndPassword(
+        email: emailTextEditingController.text,
+        password: passwordTextEditingController.text,
+      ).catchError((erMsg){
+        displayToastMassage("Error: "+erMsg.toString(), context);
+      })).user;
+
+      if(firebaseUser != null){
+        //save user info to database
+        userRef.child(firebaseUser.uid);
+
+        Map userDataMap = {
+          "name": nameTextEditingController.text.trim(),
+          "email": emailTextEditingController.text.trim(),
+          "phone": phoneTextEditingController.text.trim(),
+        }; 
+
+        userRef.child(firebaseUser.uid).set(userDataMap);
+        displayToastMassage("Congratulation, your accout has been created.", context);
+
+        Navigator.pushNamedAndRemoveUntil(context, MainScreen.idScreen, (route) => false);
+      }else{
+        // error ocured - display error msg
+        displayToastMassage("New user account has not been Created", context);
+      }
+  }
+}
+
+displayToastMassage(String massage ,BuildContext context){
+  Fluttertoast.showToast(msg: massage);
+}
